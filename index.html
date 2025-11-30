@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pengeluaran Harian - Realtime Database</title>
+<title>Pengeluaran Harian - Login Email/Password</title>
 <style>
 body { font-family:'Roboto',sans-serif; margin:0; padding:10px; background:#040b14; color:#e8e8e8; }
 .container { max-width:900px; margin:auto; background:rgba(15,25,40,0.7); backdrop-filter:blur(10px); padding:15px; border-radius:15px; border:2px solid #0ff; box-shadow:0 0 25px #0ff; }
@@ -38,7 +38,7 @@ td.keluar { background:rgba(255,59,59,0.1); }
     <input type="date" id="filterDate">
     <button class="btn btn-refresh" id="btnFilter">Filter</button>
     <button class="btn btn-refresh" id="btnClearFilter" style="background:#ff00ff; box-shadow:0 0 12px #ff00ff;">Reset</button>
-    <button class="btn btn-add" id="btnLogin">Login Google</button>
+    <button class="btn btn-add" id="btnLogin">Login</button>
   </div>
 
   <div class="table-wrapper">
@@ -64,6 +64,7 @@ td.keluar { background:rgba(255,59,59,0.1); }
   </div>
 </div>
 
+<!-- Modal Tambah Data -->
 <div class="modal" id="modalForm">
   <div class="modal-content">
     <h3>Tambah Pengeluaran / Pemasukan</h3>
@@ -80,11 +81,22 @@ td.keluar { background:rgba(255,59,59,0.1); }
   </div>
 </div>
 
+<!-- Modal Login -->
+<div class="modal" id="modalLogin">
+  <div class="modal-content">
+    <h3>Login</h3>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button class="btn btn-add" id="loginBtn">Login</button>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
+// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyCHnFBBhKUg9I0f84ai8_X7kcuQjqgSK5w",
   authDomain: "loginaksi.firebaseapp.com",
@@ -102,28 +114,39 @@ const auth = getAuth(app);
 let UID = null;
 let allData = [];
 
+// ===== FORMAT RUPIAH =====
 function formatRupiah(x){ return Number(x||0).toLocaleString('id-ID'); }
 function escape(t){ return String(t||''); }
 
-/* ===================== LOGIN GOOGLE OTOMATIS ================= */
-onAuthStateChanged(auth, user => {
+// ===== LOGIN =====
+document.addEventListener("DOMContentLoaded", ()=>{
+  const loginModal = document.getElementById("modalLogin");
+  document.getElementById("btnLogin").addEventListener("click", ()=>{ loginModal.style.display="flex"; });
+
+  document.getElementById("loginBtn").addEventListener("click", ()=>{
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
+    if(!email || !password) return alert("Masukkan email & password!");
+    
+    signInWithEmailAndPassword(auth, email, password)
+      .then(userCredential=>{
+        UID = userCredential.user.uid;
+        loginModal.style.display="none";
+        loadData();
+      })
+      .catch(err=>alert("Login gagal: "+err.message));
+  });
+});
+
+// ===== AUTH STATE CHANGE =====
+onAuthStateChanged(auth, user=>{
   if(user){
     UID = user.uid;
     loadData();
-  } else {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then(result => {
-        UID = result.user.uid;
-        loadData();
-      })
-      .catch(err => {
-        alert("Login gagal: " + err.message);
-      });
   }
 });
 
-/* ===================== LOAD DATA ===================== */
+// ===== LOAD DATA =====
 function loadData(){
   if(!UID) return;
   onValue(ref(db, `pengeluaran/${UID}`), snap=>{
@@ -133,10 +156,10 @@ function loadData(){
   });
 }
 
-/* ===================== RENDER TABLE ===================== */
+// ===== RENDER TABLE =====
 function renderTable(data){
   const tbody = document.querySelector("#dataTable tbody");
-  tbody.innerHTML = "";
+  tbody.innerHTML="";
   let masuk=0, keluar=0, saldo=0, no=1;
 
   data.sort((a,b)=>a.tanggal.localeCompare(b.tanggal)).forEach(r=>{
@@ -146,7 +169,7 @@ function renderTable(data){
     keluar += r.jenis==="keluar"?nilai:0;
 
     const tr = document.createElement("tr");
-    tr.innerHTML = `
+    tr.innerHTML=`
       <td>${no++}</td>
       <td>${escape(r.tanggal)}</td>
       <td>${escape(r.keterangan)}</td>
@@ -171,7 +194,7 @@ function renderTable(data){
   });
 }
 
-/* ===================== MODAL ===================== */
+// ===== MODAL TAMBAH DATA =====
 const modal = document.getElementById("modalForm");
 document.getElementById("btnTambah").addEventListener("click", ()=>{
   if(!UID) return alert("Login dulu!");
@@ -193,7 +216,7 @@ document.getElementById("saveBtn").addEventListener("click", ()=>{
   modal.style.display="none";
 });
 
-/* ===================== FILTER ===================== */
+// ===== FILTER =====
 document.getElementById("btnFilter").addEventListener("click", ()=>{
   const f=document.getElementById("filterDate").value;
   renderTable(allData.filter(x=>x.tanggal===f));
