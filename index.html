@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pengeluaran Harian - Neon Mode</title>
+
+<style>
+/* ===================== GLOBAL ====================== */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 10px;
+  background: #040b14;
+  color: #e8e8e8;
+}
+
+/* ===================== CONTAINER ===================== */
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: rgba(15, 25, 40, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 15px;
+  border-radius: 15px;
+  border: 2px solid #0ff;
+  box-shadow: 0 0 25px #0ff;
+}
+
+/* ===================== HEADER ======================== */
+h2 {
+  text-align: center;
+  color: #00f6ff;
+  text-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
+  letter-spacing: 1px;
+}
+
+/* ===================== BUTTON NEON ==================== */
+.btn {
+  padding: 10px 14px;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: white;
+}
+
+.btn-add {
+  background: #00ffa6;
+  box-shadow: 0 0 12px #00ffa6;
+}
+.btn-add:hover {
+  box-shadow: 0 0 20px #00ffa6, 0 0 30px #00ffa6;
+}
+
+.btn-refresh {
+  background: #00c3ff;
+  box-shadow: 0 0 12px #00c3ff;
+}
+.btn-refresh:hover {
+  box-shadow: 0 0 20px #00c3ff, 0 0 30px #00c3ff;
+}
+
+.btn-del {
+  background: #ff3b3b;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 0 10px #ff3b3b;
+}
+.btn-del:hover {
+  box-shadow: 0 0 20px #ff3b3b;
+}
+
+/* ===================== TABLE ========================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  color: #e8e8e8;
+  font-size: 14px;
+}
+
+th {
+  background: #00ecff;
+  color: black;
+  text-shadow: 0 0 5px white;
+  padding: 10px;
+  border: 1px solid #0ff;
+}
+
+td {
+  padding: 8px;
+  border: 1px solid rgba(0,255,255,0.3);
+}
+
+/* ===================== SUMMARY BOX ===================== */
+.summary {
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(0,255,255,0.1);
+  border: 1px solid #0ff;
+  border-radius: 10px;
+  box-shadow: 0 0 15px #0ff inset;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* ===================== MOBILE ========================== */
+@media (max-width: 600px) {
+  table, th, td {
+    font-size: 12px;
+  }
+  .btn {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>𝐂𝐀𝐓𝐀𝐓𝐀𝐍 𝐏𝐄𝐍𝐆𝐄𝐋𝐔𝐀𝐑𝐀𝐍</h2>
+
+  <div class="controls" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+    <input type="date" id="filterDate" style="padding:8px; border-radius:8px; border:1px solid #0ff;">
+    <button class="btn btn-refresh" id="btnFilter">𝐅𝐢𝐥𝐭𝐞𝐫</button>
+    <button class="btn btn-refresh" id="btnClearFilter" style="background:#ff00ff; box-shadow:0 0 12px #ff00ff;">𝐑𝐞𝐬𝐞𝐭</button>
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>𝐍𝐎</th>
+        <th>𝐓𝐀𝐍𝐆𝐆𝐀𝐋</th>
+        <th>𝐊𝐄𝐓𝐄𝐑𝐀𝐍𝐆𝐀𝐍</th>
+        <th>𝐉𝐄𝐍𝐈𝐒</th>
+        <th>𝐓𝐎𝐓𝐀𝐋</th>
+        <th>𝐀𝐊𝐒𝐈</th>
+        <th>𝐒𝐈𝐒𝐀 𝐒𝐀𝐋𝐃𝐎</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+    <button class="btn btn-add" id="btnTambah">+ 𝐓𝐚𝐦𝐛𝐚𝐡 𝐃𝐚𝐭𝐚</button>
+  </div>
+
+  <div class="summary">
+    <div>𝚃𝚘𝚝𝚊𝚕 𝚄𝚊𝚗𝚐 𝙼𝚊𝚜𝚞𝚔: <b id="uangMasuk">0</b></div>
+    <div>𝐓𝐨𝐭𝐚𝐥 𝐔𝐚𝐧𝐠 𝐊𝐞𝐥𝐮𝐚𝐫: <b id="uangKeluar">0</b></div>
+    <div>𝐒𝐢𝐬𝐚 𝐒𝐚𝐥𝐝𝐨: <b id="saldo">0</b></div>
+  </div>
+
+</div>
+
+<!-- FIREBASE + SCRIPT -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+/* ===================== FIREBASE CONFIG ===================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCHnFBBhKUg9I0f84ai8_X7kcuQjqgSK5w",
+  authDomain: "loginaksi.firebaseapp.com",
+  databaseURL: "https://loginaksi-default-rtdb.firebaseio.com",
+  projectId: "loginaksi",
+  storageBucket: "loginaksi.firebasestorage.app",
+  messagingSenderId: "720249983474",
+  appId: "1:720249983474:web:169e0d8aa713cd2b699b6b",
+  measurementId: "G-3P37QDYG60"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let UID = null;
+let allData = [];
+
+/* ===================== UTILS ===================== */
+function formatRupiah(x){ return Number(x||0).toLocaleString('id-ID'); }
+function escape(t){ return String(t||''); }
+
+/* ===================== AUTH ======================= */
+signInAnonymously(auth);
+onAuthStateChanged(auth, user=>{
+  if(user){
+    UID = user.uid;
+    loadData();
+  }
+});
+
+/* ===================== REALTIME LOAD ===================== */
+function loadData(){
+  onValue(ref(db, `pengeluaran/${UID}`), snap=>{
+    const d = snap.val() || {};
+    allData = Object.keys(d).map(id=>({id, ...d[id]}));
+    renderTable(allData);
+  });
+}
+
+/* ===================== RENDER TABLE ===================== */
+function renderTable(data){
+  const tbody = document.querySelector("#dataTable tbody");
+  tbody.innerHTML = "";
+
+  let masuk = 0, keluar = 0, saldo = 0, no = 1;
+
+  data.sort((a,b)=> a.tanggal.localeCompare(b.tanggal)).forEach(r=>{
+    const nilai = Number(r.total);
+
+    if(r.jenis === "masuk") saldo += nilai;
+    else saldo -= nilai;
+
+    masuk += r.jenis==="masuk" ? nilai : 0;
+    keluar += r.jenis==="keluar" ? nilai : 0;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${no++}</td>
+      <td>${escape(r.tanggal)}</td>
+      <td>${escape(r.keterangan)}</td>
+      <td>${escape(r.jenis)}</td>
+      <td style="text-align:right">${formatRupiah(r.total)}</td>
+      <td><button class="btn-del" data-id="${r.id}">Hapus</button></td>
+      <td style="text-align:right"><b>${formatRupiah(saldo)}</b></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("uangMasuk").innerText = formatRupiah(masuk);
+  document.getElementById("uangKeluar").innerText = formatRupiah(keluar);
+  document.getElementById("saldo").innerText = formatRupiah(masuk - keluar);
+
+  document.querySelectorAll(".btn-del").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(confirm("Yakin hapus data?")){
+        remove(ref(db, `pengeluaran/${UID}/${btn.dataset.id}`));
+      }
+    });
+  });
+}
+
+/* ===================== TAMBAH DATA ===================== */
+document.getElementById("btnTambah").addEventListener("click", ()=>{
+  const k = prompt("Keterangan:");
+  const j = prompt("Jenis (masuk/keluar):");
+  const t = prompt("Total:");
+  const tg = prompt("Tanggal (yyyy-mm-dd):") || new Date().toISOString().substring(0,10);
+
+  if(!k || !j || !t) return alert("Data tidak lengkap!");
+
+  push(ref(db, `pengeluaran/${UID}`), {
+    keterangan:k, jenis:j, total:Number(t), tanggal:tg
+  });
+});
+
+/* ===================== FILTER ===================== */
+document.getElementById("btnFilter").addEventListener("click", ()=>{
+  const f = document.getElementById("filterDate").value;
+  renderTable(allData.filter(x=>x.tanggal===f));
+});
+document.getElementById("btnClearFilter").addEventListener("click", ()=>{
+  document.getElementById("filterDate").value="";
+  renderTable(allData);
+});
+</script>
+
+</body>
+</html>
