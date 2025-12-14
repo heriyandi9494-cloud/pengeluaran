@@ -4,99 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pengeluaran Harian - Login Email/Password</title>
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body { font-family:'Roboto',sans-serif; margin:0; padding:10px; background:#040b14; color:#e8e8e8; }
-.container { max-width:900px; margin:auto; background:rgba(15,25,40,0.7); backdrop-filter:blur(10px); padding:15px; border-radius:15px; border:2px solid #0ff; box-shadow:0 0 25px #0ff; }
-h2 { text-align:center; color:#00f6ff; text-shadow:0 0 10px #00f6ff,0 0 20px #00f6ff; letter-spacing:1px; }
-.btn { padding:12px 16px; font-size:16px; border:none; font-weight:bold; border-radius:8px; cursor:pointer; transition:0.3s; color:white; }
-.btn-add { background:#00ffa6; box-shadow:0 0 12px #00ffa6; }
-.btn-add:hover { box-shadow:0 0 20px #00ffa6,0 0 30px #00ffa6; }
-.btn-refresh { background:#00c3ff; box-shadow:0 0 12px #00c3ff; }
-.btn-refresh:hover { box-shadow:0 0 20px #00c3ff,0 0 30px #00c3ff; }
-.btn-del { background:#ff3b3b; padding:8px 12px; border-radius:6px; font-size:14px; box-shadow:0 0 10px #ff3b3b; }
-.btn-del:hover { box-shadow:0 0 20px #ff3b3b; }
-.table-wrapper { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; margin-top:10px; color:#e8e8e8; font-size:14px; min-width:700px; }
-th { background:#00ecff; color:black; text-shadow:0 0 5px white; padding:10px; border:1px solid #0ff; text-align:center; }
-td { padding:8px; border:1px solid rgba(0,255,255,0.3); text-align:center; }
-td.masuk { background:rgba(0,255,166,0.1); }
-td.keluar { background:rgba(255,59,59,0.1); }
-.summary { margin-top:15px; padding:12px; background:rgba(0,255,255,0.1); border:1px solid #0ff; border-radius:10px; box-shadow:0 0 15px #0ff inset; display:flex; flex-wrap:wrap; gap:20px; }
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:100; }
-.modal-content { background:#0f1928; padding:20px; border-radius:12px; border:2px solid #0ff; width:90%; max-width:400px; color:#fff; }
-.modal-content h3 { margin-top:0; text-align:center; color:#00f6ff; text-shadow:0 0 10px #00f6ff; }
-.modal-content input, .modal-content select { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #0ff; background:#040b14; color:#fff; font-size:16px; }
-.modal-content button { margin-top:10px; width:100%; }
-@media (max-width:600px){ table, th, td{ font-size:12px; } .btn{width:100%;} }
+body { background-color:#040b14; color:#e8e8e8; font-family: 'Roboto', sans-serif; }
+.card { background: rgba(15,25,40,0.85); border:2px solid #0ff; }
+.card-header { background:#00f6ff; color:#000; text-align:center; font-weight:bold; text-shadow:0 0 5px #fff; }
+.table thead { background:#00ecff; color:black; }
+.table td.masuk { background: #00ffa6; }
+.table td.keluar { background: #ff00ff; }
+.summary { margin-top:15px; padding:12px; background:rgba(0,255,255,0.1); border:1px solid #0ff; border-radius:10px; }
+.modal-header { background:#00f6ff; color:#000; }
+.modal-content { background:#0f1928; color:#fff; border:2px solid #0ff; }
+.btn-add { background:#00ffa6; color:#000; }
+.btn-add:hover { background:#00ffa6; opacity:0.8; }
+.btn-refresh { background:#00c3ff; color:#000; }
+.btn-refresh:hover { background:#00c3ff; opacity:0.8; }
+.btn-del { background:#ff3b3b; color:#fff; }
+.btn-del:hover { background:#ff3b3b; opacity:0.8; }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>𝐂𝐀𝐓𝐀𝐓𝐀𝐍 𝐏𝐄𝐍𝐆𝐄𝐋𝐔𝐀𝐑𝐀𝐍</h2>
-  <div class="controls" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-    <input type="date" id="filterDate">
-    <button class="btn btn-refresh" id="btnFilter">Filter</button>
-    <button class="btn btn-refresh" id="btnClearFilter" style="background:#ff00ff; box-shadow:0 0 12px #ff00ff;">Reset</button>
-    <button class="btn btn-add" id="btnLogin">Login</button>
-  </div>
+<div class="container my-4">
+  <div class="card p-3">
+    <div class="card-header fs-4">CATATAN PENGELUARAN</div>
 
-  <div class="table-wrapper">
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>NO</th><th>TANGGAL</th><th>KETERANGAN</th>
-          <th>JENIS</th><th>TOTAL</th><th>AKSI</th><th>SISA SALDO</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+    <div class="d-flex flex-wrap gap-2 my-3">
+      <input type="date" id="filterDate" class="form-control form-control-sm w-auto">
+      <button class="btn btn-refresh btn-sm" id="btnFilter">Filter</button>
+      <button class="btn btn-refresh btn-sm" id="btnClearFilter" style="background:#ff00ff;">Reset</button>
+      <button class="btn btn-add btn-sm" id="btnLogin">Login</button>
+    </div>
 
-  <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
-    <button class="btn btn-add" id="btnTambah">+ Tambah Data</button>
-  </div>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover text-center" id="dataTable">
+        <thead>
+          <tr>
+            <th>NO</th>
+            <th>TANGGAL</th>
+            <th>KETERANGAN</th>
+            <th>JENIS</th>
+            <th>TOTAL</th>
+            <th>AKSI</th>
+            <th>SISA SALDO</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <div class="summary">
-    <div>Total Uang Masuk: <b id="uangMasuk">0</b></div>
-    <div>Total Uang Keluar: <b id="uangKeluar">0</b></div>
-    <div>Sisa Saldo: <b id="saldo">0</b></div>
+    <div class="my-2">
+      <button class="btn btn-add" id="btnTambah">+ Tambah Data</button>
+    </div>
+
+    <div class="summary d-flex flex-wrap gap-3 justify-content-between">
+      <div>Total Uang Masuk: <b id="uangMasuk">0</b></div>
+      <div>Total Uang Keluar: <b id="uangKeluar">0</b></div>
+      <div>Sisa Saldo: <b id="saldo">0</b></div>
+    </div>
   </div>
 </div>
 
 <!-- Modal Tambah Data -->
-<div class="modal" id="modalForm">
-  <div class="modal-content">
-    <h3>Tambah Pengeluaran / Pemasukan</h3>
-    <input type="text" id="inpKeterangan" placeholder="Keterangan">
-    <select id="inpJenis">
-      <option value="">--Pilih Jenis--</option>
-      <option value="masuk">Masuk</option>
-      <option value="keluar">Keluar</option>
-    </select>
-    <input type="number" id="inpTotal" placeholder="Total (Rp)">
-    <input type="date" id="inpTanggal">
-    <button class="btn btn-add" id="saveBtn">Simpan</button>
-    <button class="btn btn-refresh" id="cancelBtn">Batal</button>
+<div class="modal fade" id="modalForm" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Pengeluaran / Pemasukan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="inpKeterangan" class="form-control mb-2" placeholder="Keterangan">
+        <select id="inpJenis" class="form-select mb-2">
+          <option value="">--Pilih Jenis--</option>
+          <option value="masuk">Masuk</option>
+          <option value="keluar">Keluar</option>
+        </select>
+        <input type="number" id="inpTotal" class="form-control mb-2" placeholder="Total (Rp)">
+        <input type="date" id="inpTanggal" class="form-control mb-2">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-add" id="saveBtn">Simpan</button>
+        <button class="btn btn-refresh" data-bs-dismiss="modal">Batal</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Modal Login -->
-<div class="modal" id="modalLogin">
-  <div class="modal-content">
-    <h3>Login</h3>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPass" placeholder="Password">
-    <button class="btn btn-add" id="loginBtn">Login</button>
+<div class="modal fade" id="modalLogin" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email">
+        <input type="password" id="loginPass" class="form-control mb-2" placeholder="Password">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-add" id="loginBtn">Login</button>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
+// ==== Script JS Anda tetap sama, hanya perlu menyesuaikan modal dengan Bootstrap ====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyCynyU77o-qLZgr9ce-4baOgd9R5k4UJVs",
   authDomain: "pengeluaran-harian-bfcac.firebaseapp.com",
@@ -113,76 +135,64 @@ const auth = getAuth(app);
 let UID = null;
 let allData = [];
 
-// ===== FORMAT RUPIAH =====
 function formatRupiah(x){ return Number(x||0).toLocaleString('id-ID'); }
 function escape(t){ return String(t||''); }
 
-// ===== LOGIN =====
-document.addEventListener("DOMContentLoaded", ()=>{
-  const loginModal = document.getElementById("modalLogin");
-  document.getElementById("btnLogin").addEventListener("click", ()=>{ loginModal.style.display="flex"; });
+// Modal Bootstrap
+const modalForm = new bootstrap.Modal(document.getElementById('modalForm'));
+const modalLogin = new bootstrap.Modal(document.getElementById('modalLogin'));
 
-  document.getElementById("loginBtn").addEventListener("click", ()=>{
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPass").value.trim();
-    if(!email || !password) return alert("Masukkan email & password!");
-    
-    signInWithEmailAndPassword(auth, email, password)
-      .then(userCredential=>{
-        UID = userCredential.user.uid;
-        loginModal.style.display="none";
-        loadData();
-      })
-      .catch(err=>alert("Login gagal: "+err.message));
-  });
+// Login
+document.getElementById("btnLogin").addEventListener("click", ()=>{ modalLogin.show(); });
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPass").value.trim();
+  if(!email||!password)return alert("Masukkan email & password!");
+  signInWithEmailAndPassword(auth,email,password)
+    .then(userCredential=>{ UID=userCredential.user.uid; modalLogin.hide(); loadData(); })
+    .catch(err=>alert("Login gagal: "+err.message));
 });
 
-// ===== AUTH STATE CHANGE =====
-onAuthStateChanged(auth, user=>{
-  if(user){
-    UID = user.uid;
-    loadData();
-  }
-});
+// Auth State
+onAuthStateChanged(auth,user=>{ if(user){ UID=user.uid; loadData(); }});
 
-// ===== LOAD DATA =====
+// Load Data
 function loadData(){
   if(!UID) return;
   onValue(ref(db, `pengeluaran/${UID}`), snap=>{
-    const d = snap.val() || {};
-    allData = Object.keys(d).map(id=>({id, ...d[id]}));
+    const d=snap.val()||{};
+    allData=Object.keys(d).map(id=>({id,...d[id]}));
     renderTable(allData);
   });
 }
 
-// ===== RENDER TABLE =====
+// Render Table
 function renderTable(data){
-  const tbody = document.querySelector("#dataTable tbody");
+  const tbody=document.querySelector("#dataTable tbody");
   tbody.innerHTML="";
   let masuk=0, keluar=0, saldo=0, no=1;
-
   data.sort((a,b)=>a.tanggal.localeCompare(b.tanggal)).forEach(r=>{
     const nilai = Number(r.total);
     if(r.jenis==="masuk") saldo+=nilai; else saldo-=nilai;
     masuk += r.jenis==="masuk"?nilai:0;
     keluar += r.jenis==="keluar"?nilai:0;
 
-    const tr = document.createElement("tr");
+    const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${no++}</td>
       <td>${escape(r.tanggal)}</td>
       <td>${escape(r.keterangan)}</td>
       <td class="${r.jenis}">${escape(r.jenis)}</td>
-      <td style="text-align:right" class="${r.jenis}">${formatRupiah(r.total)}</td>
-      <td><button class="btn-del" data-id="${r.id}">Hapus</button></td>
+      <td class="${r.jenis}" style="text-align:right">${formatRupiah(r.total)}</td>
+      <td><button class="btn btn-del btn-sm" data-id="${r.id}">Hapus</button></td>
       <td style="text-align:right"><b>${formatRupiah(saldo)}</b></td>
     `;
     tbody.appendChild(tr);
   });
 
-  document.getElementById("uangMasuk").innerText = formatRupiah(masuk);
-  document.getElementById("uangKeluar").innerText = formatRupiah(keluar);
-  document.getElementById("saldo").innerText = formatRupiah(masuk - keluar);
+  document.getElementById("uangMasuk").innerText=formatRupiah(masuk);
+  document.getElementById("uangKeluar").innerText=formatRupiah(keluar);
+  document.getElementById("saldo").innerText=formatRupiah(masuk-keluar);
 
   document.querySelectorAll(".btn-del").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -193,17 +203,15 @@ function renderTable(data){
   });
 }
 
-// ===== MODAL TAMBAH DATA =====
-const modal = document.getElementById("modalForm");
+// Tambah Data
 document.getElementById("btnTambah").addEventListener("click", ()=>{
   if(!UID) return alert("Login dulu!");
   document.getElementById("inpKeterangan").value="";
   document.getElementById("inpJenis").value="";
   document.getElementById("inpTotal").value="";
   document.getElementById("inpTanggal").value = new Date().toISOString().substring(0,10);
-  modal.style.display="flex";
+  modalForm.show();
 });
-document.getElementById("cancelBtn").addEventListener("click", ()=>{ modal.style.display="none"; });
 document.getElementById("saveBtn").addEventListener("click", ()=>{
   if(!UID) return alert("Login dulu!");
   const k=document.getElementById("inpKeterangan").value.trim();
@@ -212,10 +220,10 @@ document.getElementById("saveBtn").addEventListener("click", ()=>{
   const tg=document.getElementById("inpTanggal").value;
   if(!k||!j||!t||!tg) return alert("Data tidak lengkap!");
   push(ref(db, `pengeluaran/${UID}`), { keterangan:k, jenis:j, total:t, tanggal:tg });
-  modal.style.display="none";
+  modalForm.hide();
 });
 
-// ===== FILTER =====
+// Filter
 document.getElementById("btnFilter").addEventListener("click", ()=>{
   const f=document.getElementById("filterDate").value;
   renderTable(allData.filter(x=>x.tanggal===f));
